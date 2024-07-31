@@ -32,11 +32,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").authenticated() // Protect all other API endpoints
                 .and()
                 .formLogin()
-                .loginPage("/login").permitAll()
+                .loginPage("/api/users/login").permitAll()
                 .and()
                 .logout().permitAll()
                 .and()
                 .csrf().disable(); // Disable CSRF for simplicity, but consider enabling it in a real application
+
+        // Session management
+        http.sessionManagement()
+                .maximumSessions(1) // Allow only one session per user
+                .maxSessionsPreventsLogin(true); // Prevents user from logging in if they already have an active session
     }
 
     @Override
