@@ -4,6 +4,7 @@ import com.example.recipes_suggester.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,18 +24,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                 .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs", "/webjars/**").permitAll() // Allow access to Swagger
-                .antMatchers("/api/users/register", "/api/users/login").permitAll() // Allow access to registration and login endpoints
+                .antMatchers("/api/users/register", "/api/users/login", "/api/users/current").permitAll() // Allow access to registration and login endpoints
                 .antMatchers("/api/**").authenticated() // Protect all other API endpoints
                 .and()
                 .formLogin()
-                .loginPage("/api/users/login").permitAll()
+                .loginProcessingUrl("/api/users/login") // Set the login processing URL
+                .usernameParameter("username") // Set the username parameter
+                .passwordParameter("password") // Set the password parameter
+                .defaultSuccessUrl("/api/users/current", true) // Redirect to /current on successful login
+                .permitAll()
                 .and()
-                .logout().permitAll()
+                .logout()
+                .permitAll()
                 .and()
                 .csrf().disable(); // Disable CSRF for simplicity, but consider enabling it in a real application
 

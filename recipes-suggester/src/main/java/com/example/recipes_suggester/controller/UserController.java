@@ -7,6 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -31,8 +34,29 @@ public class UserController {
 
     @GetMapping("/current")
     public String getCurrentUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || authentication.getPrincipal() == null) {
+                return "User is not logged in";
+            }
+
+            String currentUserName = authentication.getName();
+            return "Logged in as: " + currentUserName;
+        } catch (Exception e) {
+            return "An error occurred while retrieving user information, try to log-in again";
+        }
+    }
+
+
+    @GetMapping("/history")
+    public List<User.ImageHistory> getUserImageHistory() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
-        return "Logged in as: " + currentUserName;
+        User user = userService.findByUsername(currentUserName);
+        if (user != null){
+            return user.getImageHistory();
+        } else {
+            return new ArrayList<>();
+        }
     }
 }
