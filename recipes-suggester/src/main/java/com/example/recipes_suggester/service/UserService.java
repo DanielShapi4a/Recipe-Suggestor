@@ -4,19 +4,19 @@ import com.example.recipes_suggester.model.User;
 import com.example.recipes_suggester.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Service
 public class UserService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository; // Hooking our MongoDB user collection
+    private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Use PasswordEncoder interface
+    private PasswordEncoder passwordEncoder;
 
     public User registerUser(String username, String password) {
         if (userRepository.findByUsername(username) != null) {
@@ -25,7 +25,6 @@ public class UserService implements UserDetailsService {
 
         String encodedPassword = passwordEncoder.encode(password);
         User newUser = new User(username, encodedPassword);
-        System.out.println("User created successful");
         return userRepository.save(newUser);
     }
 
@@ -37,6 +36,14 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username);
+    }
+
+    public User saveUser(User user){
+        return userRepository.save(user);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
@@ -46,7 +53,7 @@ public class UserService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .roles("USER") // Assuming all users have a role of USER
+                .authorities("USER")
                 .build();
     }
 }
