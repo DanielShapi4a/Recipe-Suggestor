@@ -82,13 +82,13 @@ Send a POST request to /chat with the following JSON body:
 }
 ```
 
-📂 Endpoints
+## 📂 Endpoints
 - POST /register: Register a new user.
 - POST /login: Log in with existing user credentials.
 - POST /upload: Upload an image for analysis.
 - POST /chat: Get recipe suggestions based on ingredients.
 
-📚 Examples
+## 📚 Examples
 Example User Data in MongoDB
 ```json
 {
@@ -118,7 +118,7 @@ Example Chat Response
 }
 ```
 
-🤝 Contributing
+## 🤝 Contributing
 We welcome contributions to improve this project! Here are some ways you can help:
 - 🐞 Report Bugs: If you find any bugs, please open an issue.
 - 🌟 Request Features: If you have ideas for new features, please open an issue.
