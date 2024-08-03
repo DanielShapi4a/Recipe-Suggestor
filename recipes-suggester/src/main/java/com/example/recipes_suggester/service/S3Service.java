@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.core.sync.RequestBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -23,6 +25,8 @@ public class S3Service {
     @Value("${aws.s3.region}")
     private String region;
 
+    private static final Logger logger = LoggerFactory.getLogger(S3Service.class);
+
     public S3Service(S3Client s3Client, UserRepository userRepository) {
         this.s3Client = s3Client;
         this.userRepository = userRepository;
@@ -31,6 +35,8 @@ public class S3Service {
     public String uploadFile(MultipartFile file, String username) throws IOException {
         String key = String.format("uploads/%s/%s", username, Objects.requireNonNull(file.getOriginalFilename()).replace("\\", "/"));
         String contentType = file.getContentType();
+
+        logger.info("Uploading file to S3 with key: {}", key);
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)

@@ -12,6 +12,6 @@ public class FileUploadExceptionAdvice {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
-                .body("File size exceeds the maximum limit of 5MB.");
+                .body("File size exceeds the maximum limit of 4MB.");
     }
 }
