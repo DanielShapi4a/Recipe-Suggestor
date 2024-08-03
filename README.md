@@ -120,9 +120,7 @@ Example Chat Response
 
 🤝 Contributing
 We welcome contributions to improve this project! Here are some ways you can help:
-
-🐞 Report Bugs: If you find any bugs, please open an issue.
-🌟 Request Features: If you have ideas for new features, please open an issue.
-👩‍💻 Submit Pull Requests: If you can code, feel free to fork the repository and submit a pull request.
-
+- 🐞 Report Bugs: If you find any bugs, please open an issue.
+- 🌟 Request Features: If you have ideas for new features, please open an issue.
+- 👩‍💻 Submit Pull Requests: If you can code, feel free to fork the repository and submit a pull request.
 
