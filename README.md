@@ -1,5 +1,5 @@
 <h1 align="center">🍳 Recipe Suggester Application</h1>
-<h3 align="center">Welcome to the Recipe Suggester Application! This project combines the power of AWS Rekognition and OpenAI's ChatGPT to help you discover delicious recipes from the ingredients in your kitchen. Whether you upload images of food or directly provide a list of ingredients, this app will suggest recipes tailored to your needs.</h3>
+<h3 align="center">Welcome to the Recipe Suggester Application👨‍🍳🥙🍜 This project combines the power of AWS Rekognition and OpenAI's ChatGPT to help you discover delicious recipes from the ingredients in your kitchen. Whether you upload images of food or directly provide a list of ingredients, this app will suggest recipes tailored to your needs.</h3>
 
 ## 📋 Table of Contents
 
