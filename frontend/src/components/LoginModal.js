@@ -1,14 +1,62 @@
 import React, { useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Alert } from "react-bootstrap";
+import { loginUser, registerUser } from "../services/api";
 
 const LoginModal = ({ show, handleClose, handleLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
+  const [error, setError] = useState(""); // State to manage error messages
 
-  const handleSubmit = (e) => {
+  // Handle user registration
+  const handleRegistration = async () => {
+    try {
+      const response = await registerUser(username, password);
+      console.log("Response from registration is:", response);
+
+      if (response && response.id) {
+        // Registration successful, now log in
+        handleLogin(username);
+        handleClose();
+        setIsRegister(false); // Switch to login mode
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Registration failed:", error);
+      setError(error.response ? error.response.data.message : error.message);
+    }
+  };
+
+  // Handle user login
+  const handleLoginUser = async () => {
+    try {
+      const response = await loginUser(username, password);
+      console.log("Response from login is:", response);
+
+      if (response && response.status === "success") {
+        handleLogin(username);
+        handleClose();
+      } else {
+        setError("Invalid username or password.");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError(error.response ? error.response.data.message : error.message);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleLogin(username, password, isRegister);
+    setError(""); // Reset error message on each submit
+
+    if (isRegister) {
+      // Handle registration
+      await handleRegistration();
+    } else {
+      // Handle login
+      await handleLoginUser();
+    }
   };
 
   return (
@@ -17,6 +65,8 @@ const LoginModal = ({ show, handleClose, handleLogin }) => {
         <Modal.Title>{isRegister ? "Register" : "Login"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {error && <Alert variant="danger">{error}</Alert>}{" "}
+        {/* Display error message */}
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formUsername">
             <Form.Label>Username</Form.Label>

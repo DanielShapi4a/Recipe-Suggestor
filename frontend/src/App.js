@@ -1,22 +1,28 @@
 import React, { useState } from "react";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import LoginModal from "./components/LoginModal";
+import ChatInterface from "./components/ChatInterface";
 import "./theme/theme.css";
 
 const App = () => {
   const [showModal, setShowModal] = useState(true);
   const [user, setUser] = useState(null);
+  const [showChat, setShowChat] = useState(false);
 
-  const handleLogin = (username, password, isRegister) => {
-    // Implement login or registration logic here
-    // For now, we'll just set the user
+  const handleLogin = (username) => {
     setUser(username);
     setShowModal(false);
+    setShowChat(true);
   };
 
   const handleLogout = () => {
     setUser(null);
     setShowModal(true);
+    setShowChat(false);
+  };
+
+  const handleViewHistory = () => {
+    // Implement history viewing logic here
   };
 
   return (
@@ -25,7 +31,7 @@ const App = () => {
         <Container>
           <Navbar.Brand href="#home">Recipe Suggester</Navbar.Brand>
           <Nav className="ml-auto">
-            {user ? (
+            {user && (
               <>
                 <Nav.Link href="#" onClick={handleLogout}>
                   Logout
@@ -34,25 +40,27 @@ const App = () => {
                   Signed in as: <a href="#login">{user}</a>
                 </Navbar.Text>
               </>
-            ) : (
-              <Nav.Link href="#" onClick={() => setShowModal(true)}>
-                Login
-              </Nav.Link>
             )}
           </Nav>
         </Container>
       </Navbar>
 
       <Container className="mt-3">
-        <h1>Welcome to Recipe Suggester</h1>
-        {/* Add more content and components here */}
-      </Container>
+        {showModal && !showChat && (
+          <LoginModal
+            show={showModal}
+            handleClose={() => setShowModal(false)}
+            handleLogin={handleLogin}
+          />
+        )}
 
-      <LoginModal
-        show={showModal}
-        handleClose={() => setShowModal(false)}
-        handleLogin={handleLogin}
-      />
+        {showChat && (
+          <ChatInterface
+            onLogout={handleLogout}
+            onViewHistory={handleViewHistory}
+          />
+        )}
+      </Container>
     </div>
   );
 };

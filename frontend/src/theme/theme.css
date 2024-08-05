@@ -19,3 +19,40 @@ body {
   background-color: var(--secondary-color);
   border-color: var(--secondary-color);
 }
+
+.chat-interface {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  height: 100%;
+}
+
+.chat-footer {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.chat-body .user {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.chat-body .bot {
+  background-color: #f8d7da;
+  color: #721c24;
+}
