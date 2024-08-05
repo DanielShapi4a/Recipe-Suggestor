@@ -51,7 +51,7 @@ public class ChatGPTHttpService {
     public String suggestRecipes(String ingredients) {
         try {
             // Format the ingredients into a prompt for ChatGPT
-            String prompt = String.format("Based on the ingredients in this text suggest recipes to use them in without mentioning the text itself: %s. Can you suggest some recipes using these ingredients?", ingredients);
+            String prompt = String.format("Based on the ingredients in this text suggest recipe to use them in without mentioning the text itself: %s. ", ingredients);
 
             // Create the request body
             String body = String.format("""
