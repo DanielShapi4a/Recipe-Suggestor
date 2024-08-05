@@ -52,10 +52,13 @@ public class ImageController {
                 userService.saveUser(user);
             }
 
-            // Return the result
             return recipeMessage;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to upload file", e);
+            e.printStackTrace();
+            return "Failed to upload file. Please try again.";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "An unexpected error occurred. Please try again.";
         }
     }
 
@@ -65,7 +68,8 @@ public class ImageController {
             // Delegate recipe suggestion to ChatGPTHttpService
             return chatGPTHttpService.suggestRecipes(ingredients);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get recipe suggestions", e);
+            e.printStackTrace();
+            return "Failed to get recipe suggestions. Please try again.";
         }
     }
 }
