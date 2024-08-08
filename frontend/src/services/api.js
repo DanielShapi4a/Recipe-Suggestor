@@ -4,11 +4,10 @@ const BASE_URL = "http://localhost:8080/api";
 
 export const loginUser = async (username, password) => {
   try {
-    const response = await axios.post("http://localhost:8080/api/users/login", {
-      username,
-      password,
+    const response = await axios.post(`${BASE_URL}/users/login`, null, {
+      params: { username, password },
     });
-    return response.data; // Ensure this matches the response structure
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -16,14 +15,11 @@ export const loginUser = async (username, password) => {
 
 export const registerUser = async (username, password) => {
   try {
-    const response = await axios.post(
-      "http://localhost:8080/api/users/register",
-      {
-        username,
-        password,
-      }
-    );
-    return response.data; // Ensure this matches the response structure
+    const response = await axios.post(`${BASE_URL}/users/register`, {
+      username,
+      password,
+    });
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -38,14 +34,15 @@ export const logoutUser = async () => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error logging out:", error);
     throw error;
   }
 };
 
 export const getCurrentUser = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/current`);
+    const response = await axios.get(`${BASE_URL}/users/current`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;
@@ -54,7 +51,9 @@ export const getCurrentUser = async () => {
 
 export const getUserImageHistory = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/history`);
+    const response = await axios.get(`${BASE_URL}/users/history`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;
@@ -67,9 +66,7 @@ export const uploadImage = async (file) => {
     formData.append("file", file);
 
     const response = await axios.post(`${BASE_URL}/images/upload`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      headers: { "Content-Type": "multipart/form-data" },
       withCredentials: true,
     });
     return response.data;
@@ -85,9 +82,7 @@ export const suggestRecipes = async (ingredients) => {
       null,
       {
         params: { ingredients },
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         withCredentials: true,
       }
     );

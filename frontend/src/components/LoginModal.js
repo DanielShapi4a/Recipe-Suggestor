@@ -6,34 +6,26 @@ const LoginModal = ({ show, handleClose, handleLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
-  const [error, setError] = useState(""); // State to manage error messages
+  const [error, setError] = useState("");
 
-  // Handle user registration
   const handleRegistration = async () => {
     try {
       const response = await registerUser(username, password);
-      console.log("Response from registration is:", response);
-
       if (response && response.id) {
-        // Registration successful, now log in
         handleLogin(username);
         handleClose();
-        setIsRegister(false); // Switch to login mode
+        setIsRegister(false);
       } else {
         setError("Registration failed. Please try again.");
       }
     } catch (error) {
-      console.error("Registration failed:", error);
       setError(error.response ? error.response.data.message : error.message);
     }
   };
 
-  // Handle user login
   const handleLoginUser = async () => {
     try {
       const response = await loginUser(username, password);
-      console.log("Response from login is:", response);
-
       if (response && response.status === "success") {
         handleLogin(username);
         handleClose();
@@ -41,20 +33,16 @@ const LoginModal = ({ show, handleClose, handleLogin }) => {
         setError("Invalid username or password.");
       }
     } catch (error) {
-      console.error("Login failed:", error);
       setError(error.response ? error.response.data.message : error.message);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error message on each submit
-
+    setError("");
     if (isRegister) {
-      // Handle registration
       await handleRegistration();
     } else {
-      // Handle login
       await handleLoginUser();
     }
   };
@@ -65,8 +53,7 @@ const LoginModal = ({ show, handleClose, handleLogin }) => {
         <Modal.Title>{isRegister ? "Register" : "Login"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {error && <Alert variant="danger">{error}</Alert>}{" "}
-        {/* Display error message */}
+        {error && <Alert variant="danger">{error}</Alert>}
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formUsername">
             <Form.Label>Username</Form.Label>
@@ -75,9 +62,9 @@ const LoginModal = ({ show, handleClose, handleLogin }) => {
               placeholder="Enter username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </Form.Group>
-
           <Form.Group controlId="formPassword">
             <Form.Label>Password</Form.Label>
             <Form.Control
@@ -85,9 +72,9 @@ const LoginModal = ({ show, handleClose, handleLogin }) => {
               placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </Form.Group>
-
           <Button variant="primary" type="submit" style={{ marginTop: "10px" }}>
             {isRegister ? "Register" : "Login"}
           </Button>

@@ -10,16 +10,21 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
     if (message.trim() === "") return;
 
     const newMessage = { text: message, type: "user" };
-    setChatHistory([...chatHistory, newMessage]);
+    setChatHistory((prevHistory) => [...prevHistory, newMessage]);
 
     try {
-      const response = await axios.post("/api/images/suggest-recipes", {
-        ingredients: message,
+      const response = await axios.post("/api/images/suggest-recipes", null, {
+        params: { ingredients: message },
       });
       const reply = { text: response.data, type: "bot" };
-      setChatHistory([...chatHistory, newMessage, reply]);
+      setChatHistory((prevHistory) => [...prevHistory, reply]);
     } catch (error) {
       console.error("Error sending message:", error);
+      const errorReply = {
+        text: "Failed to get recipe suggestions. Please try again.",
+        type: "bot",
+      };
+      setChatHistory((prevHistory) => [...prevHistory, errorReply]);
     }
 
     setMessage("");
@@ -34,10 +39,15 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
       .post("/api/images/upload", formData)
       .then((response) => {
         const reply = { text: response.data, type: "bot" };
-        setChatHistory([...chatHistory, reply]);
+        setChatHistory((prevHistory) => [...prevHistory, reply]);
       })
       .catch((error) => {
         console.error("Error uploading file:", error);
+        const errorReply = {
+          text: "Failed to upload image. Please try again.",
+          type: "bot",
+        };
+        setChatHistory((prevHistory) => [...prevHistory, errorReply]);
       });
   };
 
