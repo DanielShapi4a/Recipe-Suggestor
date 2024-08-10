@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -80,8 +83,21 @@ public class UserController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String currentUserName = authentication.getName();
             User user = userService.findByUsername(currentUserName);
+
             if (user != null) {
-                return ResponseEntity.ok(user.getImageHistory());
+                // Extract the full history including recipes, image URLs, and conversations
+                List<Map<String, Object>> historyList = new ArrayList<>();
+
+                for (User.ImageHistory history : user.getImageHistory()) {
+                    Map<String, Object> historyMap = new HashMap<>();
+                    historyMap.put("imageUrl", history.getImageUrl());
+                    historyMap.put("uploadTimestamp", history.getUploadTimestamp());
+                    historyMap.put("recipes", history.getRecipes());
+                    historyMap.put("conversation", history.getConversation());
+                    historyList.add(historyMap);
+                }
+
+                return ResponseEntity.ok(historyList);
             } else {
                 return ResponseEntity.ok(new ArrayList<>());
             }
@@ -89,4 +105,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while retrieving image history");
         }
     }
+
 }
