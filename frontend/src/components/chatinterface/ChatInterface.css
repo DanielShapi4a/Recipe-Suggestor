@@ -1,0 +1,30 @@
+.response-message {
+  color: #28a745; /* Green color */
+  background-color: #546e88; /* Light background for better readability */
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  white-space: pre-wrap; /* Ensures that line breaks are preserved */
+}
+
+.chat-interface .chat-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.chat-interface .chat-body {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.chat-interface .chat-footer {
+  display: flex;
+  align-items: center;
+}
+
+.chat-interface .chat-footer .form-control {
+  flex-grow: 1;
+  margin-right: 10px;
+}

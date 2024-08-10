@@ -59,35 +59,3 @@ export const getUserImageHistory = async () => {
     throw error.response ? error.response.data : error.message;
   }
 };
-
-export const uploadImage = async (file) => {
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await axios.post(`${BASE_URL}/images/upload`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error.message;
-  }
-};
-
-export const suggestRecipes = async (ingredients) => {
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/images/suggest-recipes`,
-      null,
-      {
-        params: { ingredients },
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error.message;
-  }
-};

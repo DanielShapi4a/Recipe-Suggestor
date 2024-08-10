@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import LoginModal from "./components/LoginModal";
-import ChatInterface from "./components/ChatInterface";
+import ChatInterface from "./components/chatinterface/ChatInterface";
 import "./theme/theme.css";
 
 const App = () => {
