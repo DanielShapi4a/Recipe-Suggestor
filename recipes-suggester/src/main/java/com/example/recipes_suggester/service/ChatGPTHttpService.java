@@ -32,7 +32,7 @@ public class ChatGPTHttpService {
     private static final Logger logger = LoggerFactory.getLogger(ChatGPTHttpService.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String analyzeImageAndSuggestRecipes(String s3ObjectUrl) throws Exception {
+    public String analyzeImageAndSuggestRecipes(String s3ObjectUrl) {
         logger.info("Bucket Name: {}", bucketName);
         logger.info("S3 Object Key: {}", s3ObjectUrl);
         logger.info("AWS Region: {}", awsRegion);
@@ -53,53 +53,34 @@ public class ChatGPTHttpService {
         logger.info("Bucket Name: {}", bucketName);
         logger.info("S3 Object Key: {}", s3ObjectUrl);
         logger.info("AWS Region: {}", awsRegion);
+
         // Analyze the image using AWS Rekognition
         List<String> ingredients = analyzeImageWithRekognition(s3ObjectUrl);
-        logger.info("Ingredients from AWS: {}", ingredients);
+
         // If no ingredients found, return an appropriate message
         if (ingredients.isEmpty()) {
             return "No ingredients detected in the image.";
         }
 
-        // Format the ingredients and description into a prompt for ChatGPT
+        // Format the ingredients into a prompt for ChatGPT
         String ingredientsList = String.join(", ", ingredients);
-        String prompt;
         if (description == null || description.trim().isEmpty()) {
-            prompt = String.format("Based on the ingredients in this text suggest recipe to use them in without mentioning the text itself: %s.", ingredientsList);
+            // Use the suggestRecipes method to get a suggestion based on the ingredients list
+            return suggestRecipes(ingredientsList);
         } else {
-            prompt = String.format("Based on the ingredients in this text and the user's input string: '%s', suggest a recipe or help them with the ingredients or cooking steps. (the users don`t know that we use an image recognition model to get the ingredients from the image) The ingredients are: %s.", description, ingredientsList);
+            // Create a prompt that includes the description and ingredients list
+            String prompt = String.format(
+                    "Based on the user's input: '%s' and the ingredients: %s, suggest a recipe or provide help with cooking steps. If the user's request is unrelated to recipes or cooking, respond with a polite message stating that you only assist with recipe suggestions and cooking-related queries. Do not mention the ingredients in your response unless it's directly related to the request.",
+                    description,
+                    ingredientsList
+            );
+
+            // Use the suggestRecipes method with the updated prompt
+            return suggestRecipes(prompt);
         }
-
-        // Create the request body
-        String body = String.format("""
-        {
-            "model": "gpt-4o",
-            "messages": [
-                {
-                    "role": "user",
-                    "content": "%s"
-                }
-            ]
-        }""", prompt);
-
-        // Create the HTTP request
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.openai.com/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + apiKey)
-                .POST(HttpRequest.BodyPublishers.ofString(body))
-                .build();
-
-        // Send the request and get the response
-        HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        // Extract the recipe message from the response
-        return extractRecipeMessage(response.body());
     }
 
-
-    public String suggestRecipes(String ingredients) throws Exception {
+    public String suggestRecipes(String ingredients) {
         try {
             // Format the ingredients into a prompt for ChatGPT
             String prompt = String.format("Based on the ingredients in this text suggest recipe to use them in without mentioning the text itself: %s. ", ingredients);

@@ -5,28 +5,37 @@ import axios from "axios";
 const ChatInterface = ({ onLogout, onViewHistory }) => {
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
-  const [loading, setLoading] = useState(false); // New state for loading
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null); // State for uploaded image
 
   const handleSendMessage = async () => {
-    if (message.trim() === "") return;
-
-    const newMessage = { text: message, type: "user" };
-    setChatHistory((prevHistory) => [...prevHistory, newMessage]);
+    if (message.trim() === "" && !image) return;
 
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/images/suggest-recipes", null, {
-        params: { ingredients: message },
-      });
+      let response;
+
+      if (image) {
+        const formData = new FormData();
+        formData.append("file", image);
+        formData.append("description", message.trim() || "");
+
+        response = await axios.post("/api/images/upload", formData);
+        setImage(null); // Clear the image after sending
+      } else {
+        response = await axios.post("/api/images/suggest-recipes", null, {
+          params: { ingredients: message },
+        });
+      }
 
       const formattedReply = formatMessage(response.data);
       const reply = { text: formattedReply, type: "bot" };
       setChatHistory((prevHistory) => [...prevHistory, reply]);
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error:", error);
       const errorReply = {
-        text: "Failed to get recipe suggestions. Please try again.",
+        text: "Failed to process request. Please try again.",
         type: "bot",
       };
       setChatHistory((prevHistory) => [...prevHistory, errorReply]);
@@ -39,41 +48,21 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-
-    setLoading(true);
-
-    axios
-      .post("/api/images/upload", formData)
-      .then((response) => {
-        const formattedReply = formatMessage(response.data);
-        const reply = { text: formattedReply, type: "bot" };
-        setChatHistory((prevHistory) => [...prevHistory, reply]);
-      })
-      .catch((error) => {
-        console.error("Error uploading file:", error);
-        const errorReply = {
-          text: "Failed to upload image. Please try again.",
-          type: "bot",
-        };
-        setChatHistory((prevHistory) => [...prevHistory, errorReply]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    if (file) {
+      setImage(file);
+    }
   };
 
   const formatMessage = (message) => {
     return message
-      .replace(/### (.*?)\n/g, "<h3>$1</h3>") // Formats headers
-      .replace(/#### (.*?)\n/g, "<h4>$1</h4>") // Formats sub-headers
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Formats bold text
-      .replace(/- (.*?)\n/g, "<li>$1</li>") // Formats list items
-      .replace(/1\.\s/g, "<ol><li>") // Starts an ordered list
-      .replace(/\d\.\s/g, "</li><li>") // Continues the ordered list
-      .replace(/<\/li>$/g, "</li></ol>") // Closes the ordered list
-      .replace(/\n/g, "<br/>"); // Adds line breaks
+      .replace(/### (.*?)\n/g, "<h3>$1</h3>")
+      .replace(/#### (.*?)\n/g, "<h4>$1</h4>")
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/- (.*?)\n/g, "<li>$1</li>")
+      .replace(/1\.\s/g, "<ol><li>")
+      .replace(/\d\.\s/g, "</li><li>")
+      .replace(/<\/li>$/g, "</li></ol>")
+      .replace(/\n/g, "<br/>");
   };
 
   return (
@@ -95,13 +84,23 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
               dangerouslySetInnerHTML={{ __html: msg.text }}
             />
           ))}
+          {image && (
+            <ListGroup.Item className="image-preview">
+              <img
+                src={URL.createObjectURL(image)}
+                alt="Uploaded preview"
+                style={{ maxWidth: "100%", maxHeight: "200px" }}
+              />
+              <p>{message}</p>
+            </ListGroup.Item>
+          )}
         </ListGroup>
         {loading && <Spinner animation="border" style={{ margin: "0.5rem" }} />}
       </div>
       <div className="chat-footer">
         <Form.Control
           type="text"
-          placeholder="Type your ingredients..."
+          placeholder="Type your description or instructions..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
