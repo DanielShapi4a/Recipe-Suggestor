@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -33,7 +34,10 @@ public class ImageController {
     private ChatGPTHttpService chatGPTHttpService;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "description", required = false) String description) {
+
         // Get the authentication object to retrieve the username
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -52,7 +56,14 @@ public class ImageController {
             String imageUrl = s3Service.uploadFile(file, username);
 
             // Analyze the image and get recipe suggestions from ChatGPT
-            String recipeMessage = chatGPTHttpService.analyzeImageAndSuggestRecipes(imageUrl);
+            String recipeMessage;
+            if (description == null || description.trim().isEmpty()) {
+                // Use base logic if no description is provided
+                recipeMessage = chatGPTHttpService.analyzeImageAndSuggestRecipes(imageUrl);
+            } else {
+                // Include the description in the prompt
+                recipeMessage = chatGPTHttpService.analyzeImageWithDescriptionAndSuggestRecipes(imageUrl, description);
+            }
 
             // Save image details and recipe message to user history
             User user = userService.findByUsername(username);
