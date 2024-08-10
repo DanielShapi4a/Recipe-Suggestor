@@ -58,8 +58,9 @@ public class User {
 
     public static class ImageHistory {
         private String imageUrl;
-        private String uploadTimestamp; // Changed to String to match your model
+        private String uploadTimestamp;
         private List<String> recipes;
+        private List<ConversationMessage> conversation;
 
         public ImageHistory() {
         }
@@ -68,6 +69,7 @@ public class User {
             this.imageUrl = imageUrl;
             this.uploadTimestamp = uploadTimestamp;
             this.recipes = new ArrayList<>();
+            this.conversation = new ArrayList<>();
         }
 
         public String getImageUrl() {
@@ -92,6 +94,43 @@ public class User {
 
         public void setRecipes(List<String> recipes) {
             this.recipes = recipes;
+        }
+
+        public List<ConversationMessage> getConversation() {
+            return conversation;
+        }
+
+        public void setConversation(List<ConversationMessage> conversation) {
+            this.conversation = conversation;
+        }
+
+        public static class ConversationMessage {
+            private String type; // 'user' or 'bot'
+            private String message;
+
+            public ConversationMessage() {
+            }
+
+            public ConversationMessage(String type, String message) {
+                this.type = type;
+                this.message = message;
+            }
+
+            public String getType() {
+                return type;
+            }
+
+            public void setType(String type) {
+                this.type = type;
+            }
+
+            public String getMessage() {
+                return message;
+            }
+
+            public void setMessage(String message) {
+                this.message = message;
+            }
         }
     }
 }

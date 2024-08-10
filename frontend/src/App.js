@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import LoginModal from "./components/LoginModal";
 import ChatInterface from "./components/chatinterface/ChatInterface";
+import HistoryView from "./components/historyview/HistoryView";
 import "./theme/theme.css";
 
 const App = () => {
   const [showModal, setShowModal] = useState(true);
   const [user, setUser] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   const handleLogin = (username) => {
     setUser(username);
@@ -19,10 +21,17 @@ const App = () => {
     setUser(null);
     setShowModal(true);
     setShowChat(false);
+    setShowHistory(false);
   };
 
   const handleViewHistory = () => {
-    // Implement history viewing logic here
+    setShowChat(false);
+    setShowHistory(true);
+  };
+
+  const handleBackToChat = () => {
+    setShowHistory(false);
+    setShowChat(true);
   };
 
   return (
@@ -46,7 +55,7 @@ const App = () => {
       </Navbar>
 
       <Container className="mt-3">
-        {showModal && !showChat && (
+        {showModal && !showChat && !showHistory && (
           <LoginModal
             show={showModal}
             handleClose={() => setShowModal(false)}
@@ -54,12 +63,14 @@ const App = () => {
           />
         )}
 
-        {showChat && (
+        {showChat && !showHistory && (
           <ChatInterface
             onLogout={handleLogout}
             onViewHistory={handleViewHistory}
           />
         )}
+
+        {showHistory && <HistoryView onBack={handleBackToChat} />}
       </Container>
     </div>
   );
