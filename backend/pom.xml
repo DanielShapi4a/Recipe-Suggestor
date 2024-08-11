@@ -12,7 +12,7 @@
 	</parent>
 
 	<groupId>com.example</groupId>
-	<artifactId>recipes-suggester</artifactId>
+	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>recipes-suggester</name>
 	<description>Recipes Application</description>
