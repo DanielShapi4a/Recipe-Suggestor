@@ -109,6 +109,9 @@ const HistoryView = ({ onBack }) => {
           <div>No history yet</div>
         )}
       </ListGroup>
+      <Button variant="secondary" onClick={onBack} style={{ margin: "0.5rem" }}>
+        Back to Chat
+      </Button>
     </div>
   );
 };

@@ -36,17 +36,14 @@ const App = () => {
 
   return (
     <div className="App">
-      <Navbar bg="light" expand="lg">
+      <Navbar bg="light" expand="lg" className="navbar">
         <Container>
-          <Navbar.Brand href="#home">Recipe Suggester</Navbar.Brand>
+          <Navbar.Brand href="#home">Recipe Suggester👨‍🍳</Navbar.Brand>
           <Nav className="ml-auto">
             {user && (
               <>
-                <Nav.Link href="#" onClick={handleLogout}>
-                  Logout
-                </Nav.Link>
-                <Navbar.Text className="ml-2">
-                  Signed in as: <a href="#login">{user}</a>
+                <Navbar.Text style={{ fontWeight: "500", color: "black" }}>
+                  Signed in as: <a href="#login">{user} </a>
                 </Navbar.Text>
               </>
             )}
@@ -60,6 +57,8 @@ const App = () => {
             show={showModal}
             handleClose={() => setShowModal(false)}
             handleLogin={handleLogin}
+            backdrop="static"
+            keyboard={false}
           />
         )}
 

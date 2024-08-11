@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Form, Button, ListGroup, Spinner } from "react-bootstrap";
 import axios from "axios";
+import "./ChatInterface.css";
 
 const ChatInterface = ({ onLogout, onViewHistory }) => {
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState(null); // State for uploaded image
+  const [image, setImage] = useState(null);
 
   const handleSendMessage = async () => {
     if (message.trim() === "" && !image) return;
@@ -22,7 +23,7 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
         formData.append("description", message.trim() || "");
 
         response = await axios.post("/api/images/upload", formData);
-        setImage(null); // Clear the image after sending
+        setImage(null);
       } else {
         response = await axios.post("/api/images/suggest-recipes", null, {
           params: { ingredients: message },
@@ -52,7 +53,7 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
       setImage(file);
     }
   };
-
+  //function to format back-end data from DB
   const formatMessage = (message) => {
     return message
       .replace(/### (.*?)\n/g, "<h3>$1</h3>")
@@ -68,10 +69,10 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
   return (
     <div className="chat-interface">
       <div className="chat-header">
-        <Button variant="secondary" onClick={onLogout}>
+        <Button className="loggin-button" onClick={onLogout}>
           Logout
         </Button>
-        <Button variant="secondary" onClick={onViewHistory}>
+        <Button className="view-history-button" onClick={onViewHistory}>
           View History
         </Button>
       </div>
@@ -104,11 +105,7 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <Button
-          variant="primary"
-          onClick={handleSendMessage}
-          style={{ margin: "0.5rem" }}
-        >
+        <Button variant="primary" onClick={handleSendMessage}>
           Send
         </Button>
         <input

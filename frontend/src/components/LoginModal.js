@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { loginUser, registerUser } from "../services/api";
 
-const LoginModal = ({ show, handleClose, handleLogin }) => {
+const LoginModal = ({ show, handleClose, handleLogin, backdrop, keyboard }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
@@ -10,11 +10,17 @@ const LoginModal = ({ show, handleClose, handleLogin }) => {
 
   const handleRegistration = async () => {
     try {
-      const response = await registerUser(username, password);
-      if (response && response.id) {
-        handleLogin(username);
-        handleClose();
-        setIsRegister(false);
+      const registerResponse = await registerUser(username, password);
+      if (registerResponse && registerResponse.id) {
+        const loginResponse = await loginUser(username, password);
+        if (loginResponse && loginResponse.status === "success") {
+          handleLogin(username);
+          handleClose();
+        } else {
+          setError(
+            "Registration successful, but login failed. Please try logging in manually."
+          );
+        }
       } else {
         setError("Registration failed. Please try again.");
       }
@@ -48,7 +54,12 @@ const LoginModal = ({ show, handleClose, handleLogin }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal
+      show={show}
+      onHide={handleClose}
+      backdrop={backdrop}
+      keyboard={keyboard}
+    >
       <Modal.Header closeButton>
         <Modal.Title>{isRegister ? "Register" : "Login"}</Modal.Title>
       </Modal.Header>
