@@ -4,6 +4,9 @@ import axios from "axios";
 import "./ChatInterface.css";
 
 const ChatInterface = ({ onLogout, onViewHistory }) => {
+
+    const API_URI = "http://localhost:8080/api";
+
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -22,11 +25,14 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
         formData.append("file", image);
         formData.append("description", message.trim() || "");
 
-        response = await axios.post("/api/images/upload", formData);
+        response = await axios.post(`${API_URI}/images/upload`, formData, {
+        withCredentials: true,
+        });
         setImage(null);
       } else {
-        response = await axios.post("/api/images/suggest-recipes", null, {
+        response = await axios.post(`${API_URI}/images/suggest-recipes`, null, {
           params: { ingredients: message },
+          withCredentials: true,
         });
       }
 

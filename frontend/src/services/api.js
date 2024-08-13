@@ -6,6 +6,7 @@ export const loginUser = async (username, password) => {
   try {
     const response = await axios.post(`${BASE_URL}/users/login`, null, {
       params: { username, password },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -18,6 +19,8 @@ export const registerUser = async (username, password) => {
     const response = await axios.post(`${BASE_URL}/users/register`, {
       username,
       password,
+    },{
+    withCredentials: true,
     });
     return response.data;
   } catch (error) {
