@@ -86,7 +86,7 @@ Send a POST request to /chat with the following JSON body:
 - POST /register: Register a new user.
 - POST /login: Log in with existing user credentials.
 - POST /upload: Upload an image for analysis.
-- POST /chat: Get recipe suggestions based on ingredients.
+- POST /recipe-suggestion: Get recipe suggestions based on ingredients.
 
 ## 📚 Examples
 Example User Data in MongoDB
@@ -117,6 +117,33 @@ Example Chat Response
   ]
 }
 ```
+## 🔧 Application Properties Configuration
+The application.properties file should be created in the backend/src/main/resources directory with the following format:
+```propeeties
+{
+# Server configuration
+server.port=8080
+
+# MongoDB configuration
+spring.data.mongodb.uri=your_mongodb_connection_string
+
+# AWS S3 configuration
+aws.s3.bucketName=your_s3_bucket_name
+aws.s3.region=your_s3_region
+aws.access.key.id=your_aws_access_key_id
+aws.secret.access.key=your_aws_secret_access_key
+
+# OpenAI API key
+openai.api.key=your_openai_api_key
+
+# JSON output formatting
+spring.jackson.serialization.indent-output=true
+
+# Frontend URI (if applicable)
+frontend.uri=http://localhost:3000
+}
+```
+Replace your_mongodb_connection_string, your_s3_bucket_name, your_s3_region, your_aws_access_key_id, your_aws_secret_access_key, and your_openai_api_key with your actual credentials.
 
 ## 🤝 Contributing
 We welcome contributions to improve this project! Here are some ways you can help:
