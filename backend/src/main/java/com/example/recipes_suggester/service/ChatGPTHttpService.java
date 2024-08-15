@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 @Service
 public class ChatGPTHttpService {
 
-    private final String apiKey = System.getenv("OPENAI_KEY");
+    @Value("${OPENAI_KEY}")
+    private String apiKey;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
