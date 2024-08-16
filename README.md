@@ -14,7 +14,7 @@
 
 ## ✨ Features
 
-- 🔒 **User Registration and Authentication**: Secure user registration and login functionality.
+- 🔒 **User Registration and Authentication**: Secure user registration and login functionality with JWT.
 - 📸 **Image Upload and Analysis**: Upload food images to AWS S3, analyze them with AWS Rekognition, and get recipe suggestions from ChatGPT.
 - 💬 **Direct Recipe Chat**: Ask for recipe suggestions based on a list of ingredients without uploading an image.
 - 📜 **User History**: Track uploaded images and associated recipes for each user.
@@ -43,6 +43,37 @@
     AWS_SECRET_KEY=your_aws_secret_access_key
     OPENAI_KEY=your_openai_api_key
     ```
+## 🔧 Application Properties Configuration
+The application.properties file should be created in the backend/src/main/resources directory with the following format:
+```propeeties
+{
+# Server configuration
+server.port=8080
+
+# MongoDB configuration
+spring.data.mongodb.uri=your_mongodb_connection_string
+
+# AWS S3 configuration
+aws.s3.bucketName=your_s3_bucket_name
+aws.s3.region=your_s3_region
+aws.access.key.id=your_aws_access_key_id
+aws.secret.access.key=your_aws_secret_access_key
+
+# OpenAI API key
+openai.api.key=your_openai_api_key
+
+# JSON output formatting
+spring.jackson.serialization.indent-output=true
+
+# Frontend URI (if applicable)
+frontend.uri=http://localhost:3000
+
+# JWT configuration
+jwt.secret=your_jwt_secret
+jwt.expiration=86400000
+}
+```
+Replace your_mongodb_connection_string, your_s3_bucket_name, your_s3_region, your_aws_access_key_id, your_aws_secret_access_key, and your_openai_api_key with your actual credentials.
 
 3. **Build and Run the Application**:
     ```bash
@@ -56,19 +87,35 @@
 
 ### Register a New User
 
-Send a POST request to `/register` with the following JSON body:
+Send a POST request to `/register` with the following JSON body while changing the "password" and "username" fields only:
 ```json
 {
-  "username": "your_username",
-  "password": "your_password"
+  "id": "string",
+  "imageHistory": [
+    {
+      "conversation": [
+        {
+          "message": "string",
+          "type": "string"
+        }
+      ],
+      "imageUrl": "string",
+      "recipes": [
+        "string"
+      ],
+      "uploadTimestamp": "string"
+    }
+  ],
+  "password": "string",
+  "username": "string"
 }
 ```
 ### Log in
 Send a POST request to /login with the following JSON body:
 ```json
 {
-  "username": "your_username",
-  "password": "your_password"
+  "password": "string",
+  "username": "string"
 }
 ```
 ### Upload an Image
@@ -117,33 +164,6 @@ Example Chat Response
   ]
 }
 ```
-## 🔧 Application Properties Configuration
-The application.properties file should be created in the backend/src/main/resources directory with the following format:
-```propeeties
-{
-# Server configuration
-server.port=8080
-
-# MongoDB configuration
-spring.data.mongodb.uri=your_mongodb_connection_string
-
-# AWS S3 configuration
-aws.s3.bucketName=your_s3_bucket_name
-aws.s3.region=your_s3_region
-aws.access.key.id=your_aws_access_key_id
-aws.secret.access.key=your_aws_secret_access_key
-
-# OpenAI API key
-openai.api.key=your_openai_api_key
-
-# JSON output formatting
-spring.jackson.serialization.indent-output=true
-
-# Frontend URI (if applicable)
-frontend.uri=http://localhost:3000
-}
-```
-Replace your_mongodb_connection_string, your_s3_bucket_name, your_s3_region, your_aws_access_key_id, your_aws_secret_access_key, and your_openai_api_key with your actual credentials.
 
 ## 🤝 Contributing
 We welcome contributions to improve this project! Here are some ways you can help:
