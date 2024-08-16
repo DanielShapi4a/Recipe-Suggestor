@@ -46,7 +46,7 @@
 ## 🔧 Application Properties Configuration
 The application.properties file should be created in the backend/src/main/resources directory with the following format:
 ```propeeties
-{
+
 # Server configuration
 server.port=8080
 
@@ -71,7 +71,7 @@ frontend.uri=http://localhost:3000
 # JWT configuration
 jwt.secret=your_jwt_secret
 jwt.expiration=86400000
-}
+
 ```
 Replace your_mongodb_connection_string, your_s3_bucket_name, your_s3_region, your_aws_access_key_id, your_aws_secret_access_key, and your_openai_api_key with your actual credentials.
 
