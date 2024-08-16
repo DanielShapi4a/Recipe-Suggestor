@@ -1,17 +1,17 @@
 package com.example.recipes_suggester.controller;
 
 import com.example.recipes_suggester.model.User;
+import com.example.recipes_suggester.security.JwtTokenProvider;
+import com.example.recipes_suggester.security.LoginRequest;
+import com.example.recipes_suggester.security.LoginResponse;
 import com.example.recipes_suggester.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +24,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
@@ -35,31 +38,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         try {
-            User user = userService.authenticateUser(username, password);
-            return ResponseEntity.ok(user);
+            User user = userService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword());
+            String token = jwtTokenProvider.generateToken(user.getUsername());
+            return ResponseEntity.ok(new LoginResponse(token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Login failed: " + e.getMessage());
         }
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<String> logoutUser(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null) {
-                new SecurityContextLogoutHandler().logout(request, response, auth);
-            }
-            return ResponseEntity.ok("User has been logged out successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/test")
-    public String testEndpoint() {
-        return "Test endpoint is working!";
     }
 
     @GetMapping("/current")
@@ -73,7 +59,7 @@ public class UserController {
             String currentUserName = authentication.getName();
             return ResponseEntity.ok("Logged in as: " + currentUserName);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while retrieving user information, try to log-in again");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while retrieving user information");
         }
     }
 
@@ -85,7 +71,6 @@ public class UserController {
             User user = userService.findByUsername(currentUserName);
 
             if (user != null) {
-                // Extract the full history including recipes, image URLs, and conversations
                 List<Map<String, Object>> historyList = new ArrayList<>();
 
                 for (User.ImageHistory history : user.getImageHistory()) {
@@ -105,5 +90,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while retrieving image history");
         }
     }
-
 }
