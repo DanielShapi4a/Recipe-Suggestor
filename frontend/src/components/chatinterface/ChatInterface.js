@@ -4,8 +4,8 @@ import axios from "axios";
 import "./ChatInterface.css";
 
 const ChatInterface = ({ onLogout, onViewHistory }) => {
-
-    const API_URI = "http://localhost:8080/api";
+  const API_URI = "http://localhost:8080/api";
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -26,13 +26,13 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
         formData.append("description", message.trim() || "");
 
         response = await axios.post(`${API_URI}/images/upload`, formData, {
-        withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
         });
         setImage(null);
       } else {
         response = await axios.post(`${API_URI}/images/suggest-recipes`, null, {
           params: { ingredients: message },
-          withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
         });
       }
 
@@ -59,7 +59,7 @@ const ChatInterface = ({ onLogout, onViewHistory }) => {
       setImage(file);
     }
   };
-  //function to format back-end data from DB
+
   const formatMessage = (message) => {
     return message
       .replace(/### (.*?)\n/g, "<h3>$1</h3>")

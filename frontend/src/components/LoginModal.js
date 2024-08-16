@@ -12,8 +12,11 @@ const LoginModal = ({ show, handleClose, handleLogin, backdrop, keyboard }) => {
     try {
       const registerResponse = await registerUser(username, password);
       if (registerResponse && registerResponse.id) {
+        // Register successful, now login
         const loginResponse = await loginUser(username, password);
-        if (loginResponse && loginResponse.status === "success") {
+        if (loginResponse && loginResponse.token) {
+          // Store token in localStorage
+          localStorage.setItem("token", loginResponse.token);
           handleLogin(username);
           handleClose();
         } else {
@@ -32,7 +35,9 @@ const LoginModal = ({ show, handleClose, handleLogin, backdrop, keyboard }) => {
   const handleLoginUser = async () => {
     try {
       const response = await loginUser(username, password);
-      if (response && response.status === "success") {
+      if (response && response.token) {
+        // Store token in localStorage
+        localStorage.setItem("token", response.token);
         handleLogin(username);
         handleClose();
       } else {
